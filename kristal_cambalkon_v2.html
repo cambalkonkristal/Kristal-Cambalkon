@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173b35">
+<title>Kristal Cambalkon</title>
+<style>
+:root{--green:#173b35;--gold:#c7a45b;--bg:#f4f5f2;--line:#d9ded8}
+*{box-sizing:border-box}body{margin:0;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:#1d2925}
+header{background:var(--green);color:white;padding:20px 16px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;color:#dce8e2;font-size:13px}
+main{max-width:900px;margin:auto;padding:14px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px;box-shadow:0 2px 8px #152a2010}
+h2{font-size:18px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label{display:block;font-size:13px;color:#53615b;margin-bottom:5px}input,textarea,select{width:100%;padding:12px;border:1px solid #cbd4cd;border-radius:9px;font:inherit;background:white;color:#18251f}
+textarea{min-height:75px;resize:vertical}.wide{grid-column:1/-1}
+button{border:0;border-radius:9px;padding:12px 15px;font:600 14px inherit;cursor:pointer;background:var(--green);color:white;margin:5px 5px 0 0}
+button.alt{background:#e9eee9;color:var(--green);border:1px solid var(--line)}button.danger{background:#9d3434}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.item{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:9px;background:#fff}
+.item strong{display:block}.muted{font-size:13px;color:#63716a;margin-top:4px}
+.empty{color:#6d7771;font-size:14px;padding:10px 0}
+.notice{background:#fff8e8;border:1px solid #ead8a8;border-radius:10px;padding:11px;font-size:13px;line-height:1.45}
+.status{font-size:13px;color:#1c6b45;margin-top:8px;min-height:18px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}main{padding:10px}header{padding:17px 14px}}
+</style>
+</head>
+<body>
+<header><h1>KRİSTAL CAMBALKON</h1><p>Müşteri ve proje kayıtları · İlk çalışma sürümü</p></header>
+<main>
+<section class="card">
+<h2>Müşteri kaydı</h2>
+<div class="grid">
+<div><label>Adı soyadı</label><input id="name" placeholder="Müşteri adı soyadı"></div>
+<div><label>Telefon</label><input id="phone" type="tel" placeholder="05xx xxx xx xx"></div>
+<div class="wide"><label>Adres</label><input id="address" placeholder="Montaj yapılacak adres"></div>
+<div><label>Proje tarihi</label><input id="date" type="date"></div>
+<div><label>Not</label><input id="note" placeholder="İsteğe bağlı"></div>
+</div>
+<div class="actions"><button id="saveCustomer">Müşteriyi kaydet</button><button class="alt" id="clearForm">Temizle</button></div>
+<div class="status" id="status"></div>
+</section>
+
+<section class="card">
+<h2>Müşteriler</h2>
+<label>Müşteri ara (ad veya telefon)</label><input id="search" placeholder="Aramak için yazın">
+<div id="customers" class="empty">Henüz müşteri kaydı yok.</div>
+</section>
+
+<section class="card" id="projectCard" hidden>
+<h2 id="projectTitle">Proje pozları</h2>
+<div class="grid">
+<div><label>Poz numarası</label><input id="pozNo" placeholder="Örn. 01"></div>
+<div><label>Poz adı</label><input id="pozName" placeholder="Salon, mutfak, balkon..."></div>
+<div><label>Sistem</label><select id="system"><option>Katlanır Cambalkon</option></select></div>
+<div><label>Seri</label><input id="series" value="Process Gold"></div>
+<div><label>Cam</label><input id="glass" value="8 mm"></div>
+<div><label>Ray</label><input id="rail" value="Tek ray"></div>
+<div><label>Genişlik (cm)</label><input id="width" type="number" min="1" placeholder="Ölçü"></div>
+<div><label>Yükseklik (cm)</label><input id="height" type="number" min="1" placeholder="Ölçü"></div>
+<div><label>Açılma yönü</label><select id="direction"><option>Sağa</option><option>Sola</option><option>İki yana</option></select></div>
+<div><label>Kanat sayısı</label><input id="panels" type="number" min="1" placeholder="Otomatik hesaplanacak"></div>
+<div class="wide notice">Ölçü yöntemi: genişlik, montaj profillerinin dışından dışına; yükseklik, alt baza profilinin en altından üst kasa profilinin en üstüne alınır. Kanat en fazla 70 cm olacak şekilde hesaplanır. Cam boyu ve profil kesim düşümleri henüz üretim kataloğuyla doğrulanmadığı için bu sürümde kesim ölçüsü üretmez.</div>
+</div>
+<div class="actions"><button id="savePoz">Pozu kaydet</button></div>
+<div id="pozList" class="empty">Bu müşteriye henüz poz eklenmedi.</div>
+</section>
+
+<section class="card">
+<h2>Yedekleme</h2>
+<div class="notice">Kayıtlar bu cihazın tarayıcısında saklanır. Telefon değişirse veya tarayıcı verileri silinirse kaybolabilir. Bu nedenle düzenli yedek alın.</div>
+<div class="actions"><button id="export">Yedeği indir</button><button class="alt" id="importBtn">Yedek geri yükle</button><input id="importFile" type="file" accept="application/json" hidden></div>
+<div class="status" id="backupStatus"></div>
+</section>
+</main>
+<script>
+(function(){
+const KEY='kristal_cambalkon_v1';
+let data={customers:[]}, activeId=null, editingId=null;
+const $=id=>document.getElementById(id);
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const parsed=JSON.parse(raw);if(parsed&&Array.isArray(parsed.customers))data=parsed;}}catch(e){$('status').textContent='Kayıt alanına erişilemedi. Tarayıcı ayarlarını kontrol edin.';}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch(e){$('status').textContent='Kaydedilemedi. Tarayıcı depolama alanı kullanılamıyor.';return false}}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function reset(){['name','phone','address','date','note'].forEach(id=>$(id).value='');editingId=null;$('saveCustomer').textContent='Müşteriyi kaydet';}
+function customerForm(){return {name:$('name').value.trim(),phone:$('phone').value.trim(),address:$('address').value.trim(),date:$('date').value,note:$('note').value.trim()}}
+function renderCustomers(){
+ const q=$('search').value.toLocaleLowerCase('tr');const list=data.customers.filter(c=>(c.name+' '+c.phone).toLocaleLowerCase('tr').includes(q));
+ $('customers').innerHTML=list.length?list.map(c=>`<div class="item"><strong>${esc(c.name)}</strong><div class="muted">${esc(c.phone)} · ${esc(c.address)}</div><div class="actions"><button data-open="${c.id}">Projeyi aç</button><button class="alt" data-edit="${c.id}">Düzenle</button><button class="danger" data-del="${c.id}">Sil</button></div></div>`).join(''):'<div class="empty">Eşleşen müşteri bulunamadı.</div>';
+}
+function renderPozs(){const c=data.customers.find(x=>x.id===activeId);if(!c)return;$('projectTitle').textContent=c.name+' · Proje pozları';$('pozList').innerHTML=(c.pozs||[]).length?c.pozs.map((p,i)=>`<div class="item"><strong>Poz ${esc(p.no)} · ${esc(p.name)}</strong><div class="muted">${esc(p.system)} · ${esc(p.width)} × ${esc(p.height)} cm · ${esc(p.panels)} kanat · ${esc(p.direction)}</div><div class="muted">${esc(p.series)} · ${esc(p.glass)} · ${esc(p.rail)}</div><button class="danger" data-pdel="${i}">Pozu sil</button></div>`).join(''):'<div class="empty">Bu müşteriye henüz poz eklenmedi.</div>'}
+function clearPoz(){['pozNo','pozName','width','height','panels'].forEach(id=>$(id).value='');}
+$('saveCustomer').onclick=()=>{const c=customerForm();if(!c.name){$('status').textContent='Lütfen müşteri adını yazın.';return}if(editingId){const old=data.customers.find(x=>x.id===editingId);Object.assign(old,c)}else data.customers.unshift({...c,id:String(Date.now()),pozs:[]});if(persist()){$('status').textContent='Müşteri kaydedildi.';reset();renderCustomers()}};
+$('clearForm').onclick=reset;
+$('search').oninput=renderCustomers;
+$('customers').onclick=e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.open||b.dataset.edit||b.dataset.del;const c=data.customers.find(x=>x.id===id);if(!c)return;
+if(b.dataset.open){activeId=id;$('projectCard').hidden=false;renderPozs();$('projectCard').scrollIntoView({behavior:'smooth'})}
+if(b.dataset.edit){editingId=id;['name','phone','address','date','note'].forEach(k=>$(k).value=c[k]||'');$('saveCustomer').textContent='Değişiklikleri kaydet';window.scrollTo({top:0,behavior:'smooth'})}
+if(b.dataset.del&&confirm(c.name+' adlı müşteri ve tüm pozları silinsin mi?')){data.customers=data.customers.filter(x=>x.id!==id);if(activeId===id){activeId=null;$('projectCard').hidden=true}persist();renderCustomers()}
+};
+$('savePoz').onclick=()=>{const c=data.customers.find(x=>x.id===activeId);if(!c)return;const w=Number($('width').value),h=Number($('height').value);if(!w||!h||w<1||h<1){alert('Lütfen geçerli genişlik ve yükseklik ölçülerini girin.');return}
+const auto=Math.ceil(w/70);let n=Number($('panels').value)||auto;if(n<1){alert('Kanat sayısı en az 1 olmalı.');return}if(w/n>70&&!confirm('Bu kanat sayısında ortalama kanat genişliği 70 cm’yi aşıyor. Yine de kaydedilsin mi?'))return;
+c.pozs=c.pozs||[];c.pozs.push({no:$('pozNo').value.trim()||String(c.pozs.length+1).padStart(2,'0'),name:$('pozName').value.trim()||'İsimsiz poz',system:$('system').value,series:$('series').value,glass:$('glass').value,rail:$('rail').value,width:w,height:h,direction:$('direction').value,panels:n});if(persist()){renderPozs();clearPoz();$('status').textContent='Poz kaydedildi.'}
+};
+$('pozList').onclick=e=>{const b=e.target.closest('[data-pdel]');if(!b)return;const c=data.customers.find(x=>x.id===activeId);if(c&&confirm('Bu poz silinsin mi?')){c.pozs.splice(Number(b.dataset.pdel),1);persist();renderPozs()}};
+$('export').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kristal-cambalkon-yedek.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);$('backupStatus').textContent='Yedek dosyası oluşturuldu. Dosyayı güvenli bir yerde saklayın.'};
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d||!Array.isArray(d.customers))throw Error();if(confirm('Mevcut kayıtların yerine yedek dosyası yüklensin mi?')){data=d;persist();renderCustomers();$('backupStatus').textContent='Yedek geri yüklendi.'}}catch(err){$('backupStatus').textContent='Bu dosya geçerli bir Kristal Cambalkon yedeği değil.'}e.target.value=''};
+load();renderCustomers();
+})();
+</script>
+</body></html>
